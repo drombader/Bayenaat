@@ -523,6 +523,31 @@ body {
   .eyebrow, .cover-in .eyebrow { font-size: .82rem; }
 }
 
+/* ===== إحكام العرض على الجوال =====
+   شاشة الجوال ٨٤٤px، وكان الشريط اللاصق يأخذ ١٩٨ منها أثناء القراءة،
+   والخريطة تبعد ١٫٧ شاشة عن أعلى الصفحة. */
+@media (max-width: 620px) {
+  /* الشريط اللاصق: صفٌّ مُحكَم، وخيطُ التقدّم عند حافته السفلى لا في صفّه */
+  .score { inset-block-start: 66px; gap: 8px; padding: 9px 12px; }
+  .score b { font-size: 1.12rem; }
+  .score .bar {
+    position: absolute; inset-inline: 0; inset-block-end: 0;
+    height: 3px; border-radius: 0; flex: none;
+  }
+  .score .btn { padding: 6px 10px; font-size: .79rem; }
+  .wide { display: none; }          /* «واجهة المعلّم» ← «المعلّم» */
+
+  /* الغلاف: يُبقي الخريطة في متناول إبهامٍ واحد */
+  .cover-in { padding: 26px 18px 22px; }
+  .flow-box { padding: 11px 15px; }
+  .flow-arrow { margin-block: -2px; }
+  /* شبكةُ وصولٍ ٢×٢: العناوين تكفي، والأعداد مذكورةٌ في وجهتها */
+  .quick { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .quick button { padding: 15px 12px; }
+  .quick b { font-size: .95rem; }
+  .quick span { display: none; }
+}
+
 /* ===== الدُّرج الجانبي وتحرير النصّ ===== */
 .tq-scrim { position: fixed; inset: 0; background: rgba(30, 44, 54, .42); z-index: 60; border: 0; }
 .tq-drawer {
@@ -2255,7 +2280,7 @@ var FIGURES = {
       '<button type="button" class="btn ghost" data-drawer="index">الفهرس</button>' +
       '<button type="button" class="btn ghost" data-drawer="search">بحث</button>' +
       '<button type="button" class="btn ghost" data-mark="1">' + (S.marks.indexOf(S.page) >= 0 ? '★ محفوظة' : '☆ علامة') + '</button>' +
-      '<button type="button" class="btn ghost" data-role="' + (teacher ? 'student' : 'teacher') + '">' + (teacher ? 'واجهة الطالب' : 'واجهة المعلّم') + '</button>' +
+      '<button type="button" class="btn ghost" data-role="' + (teacher ? 'student' : 'teacher') + '"><span class="wide">واجهة </span>' + (teacher ? 'الطالب' : 'المعلّم') + '</button>' +
       '</div>';
 
     if (p.kind === 'cover' || p.kind === 'divider') {
