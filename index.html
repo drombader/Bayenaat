@@ -147,7 +147,7 @@ a { color: var(--accent); }
 }
 
 /* ===== اللوحات الداخلية ===== */
-.panel { padding: 26px 0 70px; }
+.panel { padding-block: 26px 70px; }   /* لا padding مختصر: يمحو padding-inline من .wrap */
 .crumb { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: var(--blue); margin-bottom: 14px; }
 .crumb button { color: var(--accent); text-decoration: underline; }
 .panel h1 { font-family: var(--font-serif), serif; font-size: clamp(1.6rem, 4vw, 2.2rem); margin: 0 0 8px; line-height: 1.35; text-wrap: balance; }
@@ -312,9 +312,9 @@ a { color: var(--accent); }
 .opt.wrong { border-color: #b4525f; background: #fbeef0; color: #8d3946; }
 .opt:disabled { cursor: default; }
 .why { margin-top: 10px; font-size: .88rem; color: var(--ink-2); background: var(--ground); border-radius: 10px; padding: 10px 12px; }
-.score { position: sticky; inset-block-start: 62px; z-index: 20; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; display: flex; align-items: center; gap: 14px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.score { position: sticky; inset-block-start: 62px; z-index: 20; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 14px; box-shadow: var(--shadow); }
 .score b { font-family: var(--font-serif), serif; font-size: 1.3rem; color: var(--accent); font-variant-numeric: tabular-nums; }
-.score .bar { flex: 1; height: 6px; background: var(--ground); border-radius: 99px; overflow: hidden; }
+.score .bar { flex: 1 1 90px; height: 6px; background: var(--ground); border-radius: 99px; overflow: hidden; }
 .score .bar i { display: block; height: 100%; background: var(--accent); transition: width .3s; }
 
 /* ===== الأنشطة ===== */
@@ -339,9 +339,20 @@ a { color: var(--accent); }
   .brand .sub { display: none; }
   .brand .name { font-size: 1.3rem; }
   .top-in { gap: 8px; }
-  .tabs button { padding: 6px 11px; font-size: .84rem; }
   .hero-in { padding: 34px 0 30px; }
   .sec { padding: 20px 18px; }
+
+  /* شريط الأقسام يُمرَّر أفقياً؛ تدرُّجٌ عند حافته يُنبئ ببقيّته */
+  .tabs { mask-image: linear-gradient(to left, #000 86%, transparent); }
+  .tabs button { padding: 9px 13px; font-size: .88rem; }
+
+  /* أحجامٌ مقروءة وأهدافُ لمسٍ يبلغها الإبهام */
+  .chip { font-size: .82rem; padding: 5px 12px; }
+  .pages { line-height: 2.2; }
+  .pages button { padding: 6px 0; }
+  .crumb { font-size: .88rem; }
+  .crumb button { padding: 5px 0; }
+  .btn { padding-block: 9px; }
 }
 
 /* ===== تقدّم المحطات ===== */
@@ -501,6 +512,16 @@ body {
 .src-player-bar button:hover { border-color: var(--blue); color: var(--blue); }
 .src-frame { position: relative; padding-top: 56.25%; background: #000; }
 .src-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* ===== مقروئية الجوال =====
+   هذه القواعد في آخر الملف عمداً: نظيراتها الأخصّ (‎.term-face .chip‎
+   و‎.src-card .k‎ و‎.cover-in .eyebrow‎) معرَّفةٌ لاحقاً، فلو وُضعت هنا
+   مبكّراً لغلبتها بترتيب المصدر. */
+@media (max-width: 620px) {
+  .term-face .chip { font-size: .82rem; }
+  .src-card .k, .station-card .k { font-size: .8rem; }
+  .eyebrow, .cover-in .eyebrow { font-size: .82rem; }
+}
 
 /* ===== الدُّرج الجانبي وتحرير النصّ ===== */
 .tq-scrim { position: fixed; inset: 0; background: rgba(30, 44, 54, .42); z-index: 60; border: 0; }
