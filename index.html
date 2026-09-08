@@ -474,6 +474,33 @@ body {
 .src-card p { color: var(--ink-2); font-size: .88rem; margin: 0 0 12px; }
 .src-go { font-size: .8rem; color: var(--ink-3); }
 .src-card:hover .src-go { color: var(--blue); }
+.src-card { width: 100%; font: inherit; cursor: pointer; }
+.src-card.on { border-color: var(--blue); box-shadow: var(--shadow), 0 0 0 2px var(--pale); }
+.src-card.on .src-go { color: var(--blue); }
+
+/* المشغّل المضمَّن */
+.src-stage:not(:empty) { margin-top: 16px; }
+.src-player {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
+}
+.src-player-bar {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 16px; border-bottom: 1px solid var(--line);
+}
+.src-player-bar b { font-family: var(--font-serif), serif; font-size: 1.05rem; }
+.src-player-bar a {
+  margin-inline-start: auto; font-size: .78rem;
+  color: var(--ink-3); text-decoration: none; white-space: nowrap;
+}
+.src-player-bar a:hover { color: var(--blue); }
+.src-player-bar button {
+  font-size: .78rem; color: var(--ink-3);
+  border: 1px solid var(--line); border-radius: 999px; padding: 3px 14px;
+}
+.src-player-bar button:hover { border-color: var(--blue); color: var(--blue); }
+.src-frame { position: relative; padding-top: 56.25%; background: #000; }
+.src-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
 /* ===== الدُّرج الجانبي وتحرير النصّ ===== */
 .tq-scrim { position: fixed; inset: 0; background: rgba(30, 44, 54, .42); z-index: 60; border: 0; }
@@ -1852,34 +1879,49 @@ var FIGURES = {
     return h;
   }
 
-  /* ——— موارد الكتاب الأصل ——— */
+  /* ——— موارد الكتاب الأصل ———
+     تُشغَّل داخل الصفحة في مشغّلٍ مضمَّن؛ ولا يُحمَّل الإطار إلا عند النقر،
+     فلا تثقل الصفحة ولا يتتبّع يوتيوب زائراً لم يطلب التشغيل. */
   var SOURCES = [
     {
       kind: 'استماع',
       title: 'القراءة الصوتية للكتاب',
-      desc: 'الكتاب الأصل مقروءاً كاملاً، في قائمة تشغيلٍ على يوتيوب.',
-      href: 'https://www.youtube.com/playlist?list=PL5pm4l8e-7zDgxRb2SCPGYTBU_Aq8l5Am'
+      desc: 'الكتاب الأصل مقروءاً كاملاً، في قائمة تشغيلٍ متتابعة.',
+      list: 'PL5pm4l8e-7zDgxRb2SCPGYTBU_Aq8l5Am'
     },
     {
       kind: 'شرح',
       title: 'شرح الكتاب',
       desc: 'حلقاتٌ متتابعة تشرح الكتاب، تنتقل القائمة فيها تلقائياً من حلقةٍ إلى التي تليها.',
-      href: 'https://www.youtube.com/playlist?list=PL5pm4l8e-7zAjjIvINeuWPdjRv5o-HWaN'
+      list: 'PL5pm4l8e-7zAjjIvINeuWPdjRv5o-HWaN'
     }
   ];
+
+  function ytHref(s) { return 'https://www.youtube.com/playlist?list=' + s.list; }
+
+  function player(s) {
+    return '<div class="src-player"><div class="src-player-bar">' +
+      '<b>' + esc(s.title) + '</b>' +
+      '<a href="' + esc(ytHref(s)) + '" target="_blank" rel="noopener noreferrer">فتح في يوتيوب <span aria-hidden="true">↗</span></a>' +
+      '<button type="button" data-playclose>إغلاق</button></div>' +
+      '<div class="src-frame"><iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=' +
+      encodeURIComponent(s.list) + '&amp;rel=0" title="' + esc(s.title) +
+      '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"' +
+      ' referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div></div>';
+  }
 
   function sources() {
     if (!SOURCES.length) return '';
     return '<section class="src wrap"><div class="map-head"><h2>الكتاب الأصل</h2>' +
       '<p>هذا المنهج مختصرٌ من كتاب «ترياق: نحو معالجة تأصيلية للشبهات الفكرية» ' +
-      'تأليف د. مطلق الجاسر. وهذه موارد الكتاب الأصل كاملةً.</p></div><div class="src-grid">' +
-      SOURCES.map(function (s) {
-        return '<a class="src-card" href="' + esc(s.href) + '" target="_blank" rel="noopener noreferrer">' +
+      'تأليف د. مطلق الجاسر. وهذه موارد الكتاب الأصل كاملةً، تُشغَّل هنا.</p></div><div class="src-grid">' +
+      SOURCES.map(function (s, i) {
+        return '<button type="button" class="src-card" data-play="' + i + '">' +
           '<span class="k">' + esc(s.kind) + '</span><h3>' + esc(s.title) + '</h3>' +
           '<p>' + esc(s.desc) + '</p>' +
-          '<span class="src-go">يوتيوب <span aria-hidden="true">↗</span></span></a>';
+          '<span class="src-go"><span aria-hidden="true">▶</span> شغّله هنا</span></button>';
       }).join('') +
-      '</div></section>';
+      '</div><div class="src-stage" id="src-stage"></div></section>';
   }
 
   function footer() {
@@ -2335,9 +2377,26 @@ var FIGURES = {
 
   /* ——— الأحداث ——— */
   document.addEventListener('click', function (e) {
-    var t = e.target.closest('[data-go],[data-case],[data-step],[data-branch],[data-flip],[data-ans],[data-reset],[data-timer],[data-treset],[data-page],[data-drawer],[data-mark],[data-role],[data-unedit],[data-card],[data-filter],[data-cardreset],[data-export],[data-copy],[data-print]');
+    var t = e.target.closest('[data-go],[data-play],[data-playclose],[data-case],[data-step],[data-branch],[data-flip],[data-ans],[data-reset],[data-timer],[data-treset],[data-page],[data-drawer],[data-mark],[data-role],[data-unedit],[data-card],[data-filter],[data-cardreset],[data-export],[data-copy],[data-print]');
     if (!t) return;
 
+    if (t.dataset.play !== undefined) {
+      var src = SOURCES[+t.dataset.play], stage = document.getElementById('src-stage');
+      if (src && stage) {
+        stage.innerHTML = player(src);
+        [].forEach.call(document.querySelectorAll('.src-card'), function (c) {
+          c.classList.toggle('on', c === t);
+        });
+        stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+      return;
+    }
+    if (t.dataset.playclose !== undefined) {
+      var st = document.getElementById('src-stage');
+      if (st) st.innerHTML = '';
+      [].forEach.call(document.querySelectorAll('.src-card'), function (c) { c.classList.remove('on'); });
+      return;
+    }
     if (t.dataset.go !== undefined) { go(t.dataset.go); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
     if (t.dataset.case) { tool.caseId = t.dataset.case === 'custom' ? 'custom' : t.dataset.case; tool.step = 1; tool.branch = null; go(); return; }
     if (t.dataset.step) { tool.step = Math.min(5, Math.max(1, +t.dataset.step)); go(); return; }
